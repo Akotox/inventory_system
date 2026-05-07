@@ -9,8 +9,10 @@ export const metadata: Metadata = { title: "Adjust Stock" };
 export default async function AdjustStockPage({
   searchParams,
 }: {
-  searchParams: { productId?: string };
+  searchParams: Promise<{ productId?: string }>;
 }) {
+  const { productId } = await searchParams;
+
   const products = await prisma.product.findMany({
     where: { isActive: true },
     orderBy: { name: "asc" },
@@ -22,7 +24,7 @@ export default async function AdjustStockPage({
       <div className="p-6">
         <AdjustStockForm
           products={serialize(products)}
-          preselectedProductId={searchParams.productId}
+          preselectedProductId={productId}
         />
       </div>
     </div>

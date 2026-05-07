@@ -8,19 +8,21 @@ import type { Metadata } from "next";
 export async function generateMetadata({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }): Promise<Metadata> {
-  const po = await prisma.purchaseOrder.findUnique({ where: { id: params.id } });
+  const { id } = await params;
+  const po = await prisma.purchaseOrder.findUnique({ where: { id } });
   return { title: po ? `PO ${po.poNumber}` : "PO Not Found" };
 }
 
 export default async function PODetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = await params;
   const po = await prisma.purchaseOrder.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: {
       supplier: true,
       poItems: { include: { product: true } },

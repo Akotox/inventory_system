@@ -9,8 +9,10 @@ export const metadata: Metadata = { title: "New Purchase Order" };
 export default async function NewPOPage({
   searchParams,
 }: {
-  searchParams: { productId?: string };
+  searchParams: Promise<{ productId?: string }>;
 }) {
+  const { productId } = await searchParams;
+
   const [suppliers, products] = await Promise.all([
     prisma.supplier.findMany({ where: { isActive: true }, orderBy: { name: "asc" } }),
     prisma.product.findMany({
@@ -27,7 +29,7 @@ export default async function NewPOPage({
         <NewPOForm
           suppliers={serialize(suppliers)}
           products={serialize(products)}
-          preselectedProductId={searchParams.productId}
+          preselectedProductId={productId}
         />
       </div>
     </div>

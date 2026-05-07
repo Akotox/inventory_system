@@ -7,10 +7,10 @@ async function main() {
   console.log("🌱 Seeding database...");
 
   // Users
-  const adminPassword = await bcrypt.hash("admin123", 12);
+  const adminPassword = await bcrypt.hash("Adm!n@Inv2024#Secure", 12);
   const admin = await prisma.user.upsert({
     where: { email: "admin@inventory.com" },
-    update: {},
+    update: { password: adminPassword },
     create: {
       email: "admin@inventory.com",
       name: "Admin User",
@@ -19,24 +19,26 @@ async function main() {
     },
   });
 
+  const cashierPassword = await bcrypt.hash("C@sh!er$Inv2024#Pos", 12);
   const cashier = await prisma.user.upsert({
     where: { email: "cashier@inventory.com" },
-    update: {},
+    update: { password: cashierPassword },
     create: {
       email: "cashier@inventory.com",
       name: "Jane Cashier",
-      password: await bcrypt.hash("cashier123", 12),
+      password: cashierPassword,
       role: UserRole.CASHIER,
     },
   });
 
+  const warehousePassword = await bcrypt.hash("W@reh0use#Inv2024$Stock", 12);
   const warehouse = await prisma.user.upsert({
     where: { email: "warehouse@inventory.com" },
-    update: {},
+    update: { password: warehousePassword },
     create: {
       email: "warehouse@inventory.com",
       name: "Bob Warehouse",
-      password: await bcrypt.hash("warehouse123", 12),
+      password: warehousePassword,
       role: UserRole.WAREHOUSE,
     },
   });
@@ -175,9 +177,9 @@ async function main() {
 
   console.log("✅ Seed complete!");
   console.log("\n📋 Login credentials:");
-  console.log("  Admin:     admin@inventory.com     / admin123");
-  console.log("  Cashier:   cashier@inventory.com   / cashier123");
-  console.log("  Warehouse: warehouse@inventory.com / warehouse123");
+  console.log("  Admin:     admin@inventory.com     / Adm!n@Inv2024#Secure");
+  console.log("  Cashier:   cashier@inventory.com   / C@sh!er$Inv2024#Pos");
+  console.log("  Warehouse: warehouse@inventory.com / W@reh0use#Inv2024$Stock");
 }
 
 main()

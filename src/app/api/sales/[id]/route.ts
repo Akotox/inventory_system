@@ -5,13 +5,14 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await auth();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  const { id } = await params;
   const sale = await prisma.sale.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: {
       customer: true,
       user: true,
@@ -25,16 +26,17 @@ export async function GET(
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await auth();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  const { id } = await params;
   const body = await req.json();
 
   if (body.action === "void") {
     try {
-      const sale = await SalesService.voidSale(params.id, session.user.id!);
+      const sale = await SalesService.voidSale(id, session.user.id!);
       return NextResponse.json(sale);
     } catch (err: any) {
       return NextResponse.json({ error: err.message }, { status: 400 });

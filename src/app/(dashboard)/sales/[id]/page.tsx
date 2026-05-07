@@ -8,19 +8,21 @@ import type { Metadata } from "next";
 export async function generateMetadata({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }): Promise<Metadata> {
-  const sale = await prisma.sale.findUnique({ where: { id: params.id } });
+  const { id } = await params;
+  const sale = await prisma.sale.findUnique({ where: { id } });
   return { title: sale ? `Sale ${sale.saleNumber}` : "Sale Not Found" };
 }
 
 export default async function SaleDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = await params;
   const sale = await prisma.sale.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: {
       customer: true,
       user: true,
