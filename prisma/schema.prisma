@@ -1,0 +1,280 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Auth (NextAuth v5) ───────────────────────────────────────────────────────
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ─── Users ────────────────────────────────────────────────────────────────────
+
+enum UserRole {
+  ADMIN
+  MANAGER
+  CASHIER
+  WAREHOUSE
+}
+
+// User.id is a plain cuid String to be compatible with NextAuth Prisma adapter
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  role          UserRole  @default(CASHIER)
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts           Account[]
+  sessions           Session[]
+  sales              Sale[]
+  inventoryMovements InventoryMovement[]
+
+  @@map("users")
+}
+
+// ─── Categories ───────────────────────────────────────────────────────────────
+
+model Category {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  products Product[]
+
+  @@map("categories")
+}
+
+// ─── Suppliers ────────────────────────────────────────────────────────────────
+
+model Supplier {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String
+  contactName String?
+  email       String?
+  phone       String?
+  address     String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  products       Product[]
+  purchaseOrders PurchaseOrder[]
+
+  @@map("suppliers")
+}
+
+// ─── Products ─────────────────────────────────────────────────────────────────
+
+model Product {
+  id              String   @id @default(uuid()) @db.Uuid
+  sku             String   @unique
+  name            String
+  description     String?
+  costPrice       Decimal  @default(0) @db.Decimal(10, 2)
+  sellingPrice    Decimal  @default(0) @db.Decimal(10, 2)
+  stockQuantity   Int      @default(0)
+  reorderLevel    Int      @default(10)
+  reorderQuantity Int      @default(50)
+  isActive        Boolean  @default(true)
+  categoryId      String?  @db.Uuid
+  supplierId      String?  @db.Uuid
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  category           Category?           @relation(fields: [categoryId], references: [id])
+  supplier           Supplier?           @relation(fields: [supplierId], references: [id])
+  saleItems          SaleItem[]
+  poItems            POItem[]
+  inventoryMovements InventoryMovement[]
+
+  @@map("products")
+}
+
+// ─── Customers ────────────────────────────────────────────────────────────────
+
+model Customer {
+  id         String   @id @default(uuid()) @db.Uuid
+  name       String
+  email      String?  @unique
+  phone      String?
+  address    String?
+  totalSpent Decimal  @default(0) @db.Decimal(10, 2)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  sales Sale[]
+
+  @@map("customers")
+}
+
+// ─── Sales ────────────────────────────────────────────────────────────────────
+
+enum PaymentMethod {
+  CASH
+  CARD
+  TRANSFER
+  MIXED
+}
+
+enum SaleStatus {
+  PAID
+  INVOICED
+  PARTIAL
+  VOID
+}
+
+model Sale {
+  id            String        @id @default(uuid()) @db.Uuid
+  saleNumber    String        @unique
+  customerId    String?       @db.Uuid
+  userId        String        // plain String — references User.id (cuid)
+  subtotal      Decimal       @db.Decimal(10, 2)
+  discount      Decimal       @default(0) @db.Decimal(10, 2)
+  tax           Decimal       @default(0) @db.Decimal(10, 2)
+  total         Decimal       @db.Decimal(10, 2)
+  paymentMethod PaymentMethod @default(CASH)
+  status        SaleStatus    @default(PAID)
+  notes         String?
+  saleDate      DateTime      @default(now())
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  customer  Customer?  @relation(fields: [customerId], references: [id])
+  user      User       @relation(fields: [userId], references: [id])
+  saleItems SaleItem[]
+
+  @@map("sales")
+}
+
+model SaleItem {
+  id        String  @id @default(uuid()) @db.Uuid
+  saleId    String  @db.Uuid
+  productId String  @db.Uuid
+  quantity  Int
+  unitPrice Decimal @db.Decimal(10, 2)
+  discount  Decimal @default(0) @db.Decimal(10, 2)
+  lineTotal Decimal @db.Decimal(10, 2)
+
+  sale    Sale    @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+
+  @@map("sale_items")
+}
+
+// ─── Purchase Orders ──────────────────────────────────────────────────────────
+
+enum POStatus {
+  DRAFT
+  SENT
+  PARTIAL
+  RECEIVED
+  CANCELLED
+}
+
+model PurchaseOrder {
+  id           String    @id @default(uuid()) @db.Uuid
+  poNumber     String    @unique
+  supplierId   String    @db.Uuid
+  status       POStatus  @default(DRAFT)
+  totalAmount  Decimal   @default(0) @db.Decimal(10, 2)
+  notes        String?
+  expectedDate DateTime?
+  receivedDate DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  supplier Supplier @relation(fields: [supplierId], references: [id])
+  poItems  POItem[]
+
+  @@map("purchase_orders")
+}
+
+model POItem {
+  id               String  @id @default(uuid()) @db.Uuid
+  purchaseOrderId  String  @db.Uuid
+  productId        String  @db.Uuid
+  quantityOrdered  Int
+  quantityReceived Int     @default(0)
+  unitCost         Decimal @db.Decimal(10, 2)
+  lineTotal        Decimal @db.Decimal(10, 2)
+
+  purchaseOrder PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+  product       Product       @relation(fields: [productId], references: [id])
+
+  @@map("po_items")
+}
+
+// ─── Inventory Movements ──────────────────────────────────────────────────────
+
+enum MovementType {
+  SALE
+  PURCHASE
+  ADJUSTMENT
+  RETURN
+}
+
+model InventoryMovement {
+  id             String       @id @default(uuid()) @db.Uuid
+  productId      String       @db.Uuid
+  type           MovementType
+  quantity       Int
+  quantityBefore Int
+  quantityAfter  Int
+  referenceId    String?      @db.Uuid
+  referenceType  String?      // SALE | PURCHASE_ORDER
+  notes          String?
+  createdById    String       // plain String — references User.id (cuid)
+  createdAt      DateTime     @default(now())
+
+  product   Product @relation(fields: [productId], references: [id])
+  createdBy User    @relation(fields: [createdById], references: [id])
+
+  @@map("inventory_movements")
+}
