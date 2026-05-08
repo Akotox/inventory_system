@@ -68,7 +68,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const product = await prisma.product.create({ data: parsed.data });
+    const { categoryId, supplierId, ...rest } = parsed.data;
+    const product = await prisma.product.create({
+      data: {
+        ...rest,
+        ...(categoryId != null && { categoryId }),
+        ...(supplierId != null && { supplierId }),
+      },
+    });
     return NextResponse.json(product, { status: 201 });
   } catch (err: any) {
     if (err.code === "P2002") {
