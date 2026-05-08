@@ -4,6 +4,8 @@ import { SalesService } from "@/lib/services/sales.service";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
+
+export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
