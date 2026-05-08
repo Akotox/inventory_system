@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
 export const dynamic = "force-dynamic";
@@ -69,13 +70,12 @@ export async function POST(req: NextRequest) {
     }
 
     const { categoryId, supplierId, ...rest } = parsed.data;
-    const product = await prisma.product.create({
-      data: {
-        ...rest,
-        ...(categoryId != null && { categoryId }),
-        ...(supplierId != null && { supplierId }),
-      },
-    });
+    const data: Prisma.ProductUncheckedCreateInput = {
+      ...rest,
+      ...(categoryId != null && { categoryId }),
+      ...(supplierId != null && { supplierId }),
+    };
+    const product = await prisma.product.create({ data });
     return NextResponse.json(product, { status: 201 });
   } catch (err: any) {
     if (err.code === "P2002") {
