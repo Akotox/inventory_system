@@ -17,7 +17,7 @@ export default async function NewPOPage({
     prisma.supplier.findMany({ where: { isActive: true }, orderBy: { name: "asc" } }),
     prisma.product.findMany({
       where: { isActive: true },
-      include: { supplier: true },
+      include: { category: true, supplier: true },
       orderBy: { name: "asc" },
     }),
   ]);

@@ -10,7 +10,7 @@ export default async function POSPage() {
   const [products, customers] = await Promise.all([
     prisma.product.findMany({
       where: { isActive: true, stockQuantity: { gt: 0 } },
-      include: { category: true },
+      include: { category: true, supplier: true },
       orderBy: { name: "asc" },
     }),
     prisma.customer.findMany({
