@@ -46,7 +46,7 @@ async function getDashboardData() {
     prisma.sale.findMany({
       take: 10,
       orderBy: { saleDate: "desc" },
-      include: { customer: true, user: true, saleItems: true },
+      include: { customer: true, user: true, saleItems: { include: { product: true } } },
     }),
     // Last 7 days — fetch rows and group in JS to avoid raw SQL quoting issues
     prisma.sale.findMany({
