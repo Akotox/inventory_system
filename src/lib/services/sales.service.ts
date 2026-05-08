@@ -11,7 +11,7 @@ export interface CreateSaleItemDTO {
 }
 
 export interface CreateSaleDTO {
-  customerId?: string;
+  customerId?: string | null;
   userId: string;
   items: CreateSaleItemDTO[];
   discount?: number;
