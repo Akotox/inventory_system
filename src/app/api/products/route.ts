@@ -7,6 +7,7 @@ import { z } from "zod";
 export const dynamic = "force-dynamic";
 
 const createProductSchema = z.object({
+  sku: z.string().min(1),
   name: z.string().min(1),
   description: z.string().optional(),
   costPrice: z.number().min(0),
