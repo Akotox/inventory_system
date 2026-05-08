@@ -3,7 +3,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
-const createProductSchema = z.object({
+export const dynamic = "force-dynamic"; = z.object({
   sku: z.string().min(1),
   name: z.string().min(1),
   description: z.string().optional(),

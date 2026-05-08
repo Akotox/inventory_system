@@ -3,6 +3,8 @@ import { auth } from "@/auth";
 import { PurchaseService } from "@/lib/services/purchase.service";
 import { z } from "zod";
 
+export const dynamic = "force-dynamic";
+
 const receiveSchema = z.object({
   items: z.array(
     z.object({

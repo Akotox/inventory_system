@@ -4,6 +4,8 @@ import { SalesService } from "@/lib/services/sales.service";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
+export const dynamic = "force-dynamic";
+
 const createSaleSchema = z.object({
   customerId: z.string().uuid().optional().nullable(),
   userId: z.string().uuid(),

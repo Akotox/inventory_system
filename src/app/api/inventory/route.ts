@@ -4,6 +4,8 @@ import { InventoryService } from "@/lib/services/inventory.service";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
+export const dynamic = "force-dynamic";
+
 const adjustSchema = z.object({
   productId: z.string().uuid(),
   quantity: z.number().int(),

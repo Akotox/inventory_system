@@ -3,7 +3,7 @@ import { auth } from "@/auth";
 import { SalesService } from "@/lib/services/sales.service";
 import { prisma } from "@/lib/prisma";
 
-export async function GET(
+export const dynamic = "force-dynamic";
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {

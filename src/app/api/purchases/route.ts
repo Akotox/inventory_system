@@ -4,6 +4,8 @@ import { PurchaseService } from "@/lib/services/purchase.service";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
+export const dynamic = "force-dynamic";
+
 const createPOSchema = z.object({
   supplierId: z.string().uuid(),
   items: z.array(
