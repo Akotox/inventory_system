@@ -37,7 +37,7 @@ async function getDashboardData() {
     }),
     prisma.product.findMany({
       where: { isActive: true },
-      include: { supplier: true },
+      include: { category: true, supplier: true },
       orderBy: { stockQuantity: "asc" },
     }),
     prisma.purchaseOrder.count({
