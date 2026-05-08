@@ -5,7 +5,7 @@ import { startOfDay, subDays } from "date-fns";
 
 export async function GET(req: NextRequest) {
   const session = await auth();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const today = startOfDay(new Date());
   const yesterday = startOfDay(subDays(new Date(), 1));
