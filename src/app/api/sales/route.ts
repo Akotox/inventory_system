@@ -36,7 +36,7 @@ export async function GET(req: NextRequest) {
   const [sales, total] = await Promise.all([
     prisma.sale.findMany({
       where,
-      include: { customer: true, user: true, saleItems: true },
+      include: { customer: true, user: true, saleItems: { include: { product: true } } },
       orderBy: { saleDate: "desc" },
       skip: page * pageSize,
       take: pageSize,

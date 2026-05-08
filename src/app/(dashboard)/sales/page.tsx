@@ -11,7 +11,7 @@ export default async function SalesPage() {
     include: {
       customer: true,
       user: true,
-      saleItems: true,
+      saleItems: { include: { product: true } },
     },
     orderBy: { saleDate: "desc" },
     take: 500,
