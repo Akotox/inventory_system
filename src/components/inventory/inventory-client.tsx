@@ -18,23 +18,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SlidersHorizontal } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import type { InventoryMovementWithRelations, ProductWithRelations, Category } from "@/types";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-
-// Tabs component (inline since we haven't created it yet)
-function Tabs({ children, defaultValue }: { children: React.ReactNode; defaultValue: string }) {
-  const [active, setActive] = useState(defaultValue);
-  return (
-    <div data-active={active}>
-      {/* Pass active state via context in real app; simplified here */}
-      {children}
-    </div>
-  );
-}
 
 interface InventoryClientProps {
   movements: InventoryMovementWithRelations[];
