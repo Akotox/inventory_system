@@ -15,7 +15,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
+import Skeleton from "../../../../components/ui/skeleton";
 import Link from "next/link";
 import { formatCurrency } from "@/lib/utils";
 import {
@@ -165,7 +165,7 @@ export default function TransactionsPage() {
             <Download className="mr-2 h-4 w-4" />
             Export CSV
           </Button>
-          <Dialog open={isDialogOpen} onOpenChange={(open) => !open && handleCloseDialog()}>
+          <Dialog open={isDialogOpen} onOpenChange={(open) => open ? setIsDialogOpen(true) : handleCloseDialog()}>
             <DialogTrigger asChild>
               <Button className="bg-zinc-900 hover:bg-zinc-800 text-white shadow-md">
                 <Plus className="mr-2 h-4 w-4" />
