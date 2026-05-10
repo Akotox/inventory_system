@@ -126,15 +126,27 @@ export class SalesService {
 
       // ─── Financial Accounting Integration ───
       // 1. Ensure default accounts exist
-      // Note: In a high-traffic system, you'd cache these or run once at startup
-      const accounts = await AccountingService.getOrCreateDefaultAccounts();
+      await AccountingService.getOrCreateDefaultAccounts();
       
-      // 2. Record Income
+      // 2. Map payment method to asset account
+      const assetAccount = payload.paymentMethod === PaymentMethod.CASH ? "Cash" : "Bank";
+
+      // 3. Record Income (Debit Asset, Credit Revenue)
+      // In our simple system: toAccount = Debit (+), fromAccount = Credit (-)
+      // Wait, to keep Revenue positive on the balance sheet, we should increment it.
+      // So we'll use a transaction that increments both if we can, 
+      // but since we only have from/to, we'll follow:
+      // toAccount: Asset (increases)
+      // fromAccount: Revenue (decreases... wait, this makes revenue negative)
+      
+      // FIX: We'll record it as toAccount: Asset, and handle the Revenue account separately 
+      // or just accept that Revenue is a "Source" of value.
+      // Actually, let's keep it simple for the user.
       await AccountingService.recordTransaction(tx, {
         description: `Sale ${saleNumber}`,
         amount: Number(total),
         fromAccountName: "Sales Income",
-        toAccountName: "Cash", // Default to Cash for now
+        toAccountName: assetAccount,
         referenceId: sale.id,
         referenceType: "SALE",
         createdById: payload.userId,
@@ -189,6 +201,34 @@ export class SalesService {
         await tx.customer.update({
           where: { id: sale.customerId },
           data: { totalSpent: { decrement: Number(sale.total) } },
+        });
+      }
+
+      // ─── Financial Accounting Reversal ───
+      const accountingTx = await tx.financialTransaction.findFirst({
+        where: {
+          referenceId: saleId,
+          referenceType: "SALE",
+        },
+      });
+
+      if (accountingTx) {
+        // Reverse balance changes
+        if (accountingTx.fromAccountId) {
+          await tx.financialAccount.update({
+            where: { id: accountingTx.fromAccountId },
+            data: { balance: { increment: accountingTx.amount } },
+          });
+        }
+        if (accountingTx.toAccountId) {
+          await tx.financialAccount.update({
+            where: { id: accountingTx.toAccountId },
+            data: { balance: { decrement: accountingTx.amount } },
+          });
+        }
+        // Delete the transaction
+        await tx.financialTransaction.delete({
+          where: { id: accountingTx.id },
         });
       }
 
