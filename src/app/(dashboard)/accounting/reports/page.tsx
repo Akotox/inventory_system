@@ -46,64 +46,63 @@ export default function BalanceSheetPage() {
   }
 
   return (
-    <div className="p-8 max-w-5xl mx-auto space-y-8 animate-in fade-in duration-700">
+    <div className="p-8 max-w-5xl mx-auto space-y-8 animate-in fade-in duration-700 bg-zinc-50/50 min-h-screen">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <Link href="/accounting">
-            <Button variant="ghost" size="icon" className="rounded-full hover:bg-zinc-800">
+            <Button variant="ghost" size="icon" className="rounded-full hover:bg-zinc-200 text-zinc-600">
               <ArrowLeft className="h-5 w-5" />
             </Button>
           </Link>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-white">Financial Reports</h1>
-            <p className="text-muted-foreground">Detailed financial statements for your firm.</p>
+            <h1 className="text-3xl font-black tracking-tight text-zinc-900">Financial Reports</h1>
+            <p className="text-zinc-500 font-medium">Detailed financial statements for your firm.</p>
           </div>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" className="border-zinc-800 bg-zinc-900/50" onClick={() => window.print()}>
+          <Button variant="outline" className="border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 shadow-sm" onClick={() => window.print()}>
             <Printer className="mr-2 h-4 w-4" />
             Print
           </Button>
-          <Button className="bg-blue-600 hover:bg-blue-700">
+          <Button className="bg-zinc-900 hover:bg-zinc-800 text-white shadow-md">
             <Download className="mr-2 h-4 w-4" />
             Download PDF
           </Button>
         </div>
       </div>
 
-      <Card className="bg-zinc-900 border-zinc-800 shadow-2xl print:bg-white print:text-black print:shadow-none">
-        <CardHeader className="text-center border-b border-zinc-800 pb-8">
-          <div className="flex justify-center mb-4">
-            <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center">
-              <Building2 className="h-7 w-7 text-white" />
+      <Card className="bg-white border-zinc-200 shadow-2xl print:bg-white print:text-black print:shadow-none overflow-hidden">
+        <CardHeader className="text-center border-b-4 border-zinc-900 pb-12 pt-16 bg-zinc-50/30">
+          <div className="flex justify-center mb-6">
+            <div className="w-16 h-16 rounded-2xl bg-zinc-900 flex items-center justify-center shadow-lg">
+              <Building2 className="h-9 w-9 text-white" />
             </div>
           </div>
-          <CardTitle className="text-3xl font-serif tracking-widest uppercase">Costech Systems</CardTitle>
-          <CardTitle className="text-xl mt-2 text-blue-400 font-light uppercase tracking-[0.2em]">Balance Sheet</CardTitle>
-          <CardDescription className="flex items-center justify-center gap-2 mt-4 text-muted-foreground uppercase text-xs tracking-widest">
+          <CardTitle className="text-4xl font-serif tracking-tight text-zinc-900 mb-2">Costech Systems</CardTitle>
+          <CardTitle className="text-xl text-zinc-500 font-bold uppercase tracking-[0.3em]">Statement of Financial Position</CardTitle>
+          <CardDescription className="flex items-center justify-center gap-2 mt-6 text-zinc-400 font-bold uppercase text-[10px] tracking-widest">
             <Calendar className="h-3 w-3" />
             As of {new Date().toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}
           </CardDescription>
         </CardHeader>
-        <CardContent className="pt-10 px-10 pb-16 space-y-12">
+        <CardContent className="pt-16 px-16 pb-24 space-y-16">
           {/* Assets Section */}
-          <section className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h3 className="text-xl font-bold text-white border-l-4 border-blue-500 pl-4 uppercase tracking-wider">Assets</h3>
-              <span className="text-sm text-muted-foreground italic font-light">Current & Fixed Assets</span>
+          <section className="space-y-8">
+            <div className="flex items-center justify-between border-b-2 border-zinc-900 pb-2">
+              <h3 className="text-2xl font-black text-zinc-900 uppercase tracking-tighter">Assets</h3>
+              <span className="text-[10px] text-zinc-400 font-black uppercase tracking-widest">Debit Balance</span>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-6">
               {data.assets.map((a: any, i: number) => (
-                <div key={i} className="flex justify-between items-center group">
-                  <span className="text-zinc-400 group-hover:text-white transition-colors">{a.name}</span>
-                  <div className="flex-1 border-b border-zinc-800 border-dotted mx-4 h-4" />
-                  <span className="font-mono text-white">{formatCurrency(a.balance)}</span>
+                <div key={i} className="flex justify-between items-end group">
+                  <span className="text-zinc-600 font-bold group-hover:text-zinc-900 transition-colors">{a.name}</span>
+                  <div className="flex-1 border-b border-zinc-200 border-dotted mx-4 mb-1.5 h-0" />
+                  <span className="font-mono text-zinc-900 font-bold">{formatCurrency(a.balance)}</span>
                 </div>
               ))}
-              <Separator className="bg-zinc-800" />
-              <div className="flex justify-between items-center text-lg font-bold">
-                <span className="text-white uppercase tracking-tighter">Total Assets</span>
-                <span className="text-blue-400 underline decoration-2 underline-offset-4 decoration-blue-500/30">
+              <div className="flex justify-between items-center pt-4 border-t-2 border-zinc-100">
+                <span className="text-zinc-900 font-black uppercase text-sm">Total Assets</span>
+                <span className="text-xl font-black text-zinc-900 underline decoration-double decoration-zinc-900 underline-offset-4">
                   {formatCurrency(data.summary.totalAssets)}
                 </span>
               </div>
@@ -111,70 +110,70 @@ export default function BalanceSheetPage() {
           </section>
 
           {/* Liabilities Section */}
-          <section className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h3 className="text-xl font-bold text-white border-l-4 border-rose-500 pl-4 uppercase tracking-wider">Liabilities</h3>
+          <section className="space-y-8">
+            <div className="flex items-center justify-between border-b-2 border-zinc-900 pb-2">
+              <h3 className="text-2xl font-black text-zinc-900 uppercase tracking-tighter">Liabilities</h3>
+              <span className="text-[10px] text-zinc-400 font-black uppercase tracking-widest">Credit Balance</span>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-6">
               {data.liabilities.map((a: any, i: number) => (
-                <div key={i} className="flex justify-between items-center group">
-                  <span className="text-zinc-400 group-hover:text-white transition-colors">{a.name}</span>
-                  <div className="flex-1 border-b border-zinc-800 border-dotted mx-4 h-4" />
-                  <span className="font-mono text-white">{formatCurrency(a.balance)}</span>
+                <div key={i} className="flex justify-between items-end group">
+                  <span className="text-zinc-600 font-bold group-hover:text-zinc-900 transition-colors">{a.name}</span>
+                  <div className="flex-1 border-b border-zinc-200 border-dotted mx-4 mb-1.5 h-0" />
+                  <span className="font-mono text-zinc-900 font-bold">{formatCurrency(a.balance)}</span>
                 </div>
               ))}
-              {data.liabilities.length === 0 && <p className="text-zinc-500 italic text-sm">No liabilities recorded.</p>}
-              <Separator className="bg-zinc-800" />
-              <div className="flex justify-between items-center text-lg font-bold">
-                <span className="text-white uppercase tracking-tighter">Total Liabilities</span>
-                <span className="text-rose-400">{formatCurrency(data.summary.totalLiabilities)}</span>
+              {data.liabilities.length === 0 && <p className="text-zinc-400 italic text-sm font-medium">No current liabilities.</p>}
+              <div className="flex justify-between items-center pt-4 border-t-2 border-zinc-100">
+                <span className="text-zinc-900 font-black uppercase text-sm">Total Liabilities</span>
+                <span className="text-xl font-bold text-zinc-900">{formatCurrency(data.summary.totalLiabilities)}</span>
               </div>
             </div>
           </section>
 
           {/* Equity Section */}
-          <section className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h3 className="text-xl font-bold text-white border-l-4 border-emerald-500 pl-4 uppercase tracking-wider">Equity</h3>
+          <section className="space-y-8">
+            <div className="flex items-center justify-between border-b-2 border-zinc-900 pb-2">
+              <h3 className="text-2xl font-black text-zinc-900 uppercase tracking-tighter">Equity</h3>
+              <span className="text-[10px] text-zinc-400 font-black uppercase tracking-widest">Owner's Interest</span>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-6">
               {data.equity.map((a: any, i: number) => (
-                <div key={i} className="flex justify-between items-center group">
-                  <span className="text-zinc-400 group-hover:text-white transition-colors">{a.name}</span>
-                  <div className="flex-1 border-b border-zinc-800 border-dotted mx-4 h-4" />
-                  <span className="font-mono text-white">{formatCurrency(a.balance)}</span>
+                <div key={i} className="flex justify-between items-end group">
+                  <span className="text-zinc-600 font-bold group-hover:text-zinc-900 transition-colors">{a.name}</span>
+                  <div className="flex-1 border-b border-zinc-200 border-dotted mx-4 mb-1.5 h-0" />
+                  <span className="font-mono text-zinc-900 font-bold">{formatCurrency(a.balance)}</span>
                 </div>
               ))}
-              <div className="flex justify-between items-center group">
-                <span className="text-zinc-400 group-hover:text-white transition-colors italic">Net Income / (Loss)</span>
-                <div className="flex-1 border-b border-zinc-800 border-dotted mx-4 h-4" />
-                <span className={`font-mono ${data.netIncome >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+              <div className="flex justify-between items-end group">
+                <span className="text-zinc-600 font-bold group-hover:text-zinc-900 transition-colors italic">Retained Earnings (Net Income)</span>
+                <div className="flex-1 border-b border-zinc-200 border-dotted mx-4 mb-1.5 h-0" />
+                <span className={`font-mono font-bold ${data.netIncome >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
                   {formatCurrency(data.netIncome)}
                 </span>
               </div>
-              <Separator className="bg-zinc-800" />
-              <div className="flex justify-between items-center text-lg font-bold">
-                <span className="text-white uppercase tracking-tighter">Total Equity</span>
-                <span className="text-emerald-400">{formatCurrency(data.summary.totalEquityPlusNetIncome)}</span>
+              <div className="flex justify-between items-center pt-4 border-t-2 border-zinc-100">
+                <span className="text-zinc-900 font-black uppercase text-sm">Total Equity</span>
+                <span className="text-xl font-bold text-zinc-900">{formatCurrency(data.summary.totalEquityPlusNetIncome)}</span>
               </div>
             </div>
           </section>
 
-          {/* Final Totals */}
-          <div className="bg-zinc-800/30 p-6 rounded-2xl border border-zinc-700/50 flex flex-col md:flex-row justify-between items-center gap-6">
+          {/* Final Totals Footer */}
+          <div className="mt-12 bg-zinc-900 p-10 rounded-3xl text-white shadow-xl flex flex-col md:flex-row justify-between items-center gap-10">
             <div className="text-center md:text-left">
-              <p className="text-xs text-muted-foreground uppercase tracking-widest mb-1">Fundamental Accounting Equation</p>
-              <p className="text-sm font-light text-zinc-400 italic">Assets = Liabilities + Equity</p>
+              <p className="text-[10px] text-zinc-400 font-black uppercase tracking-[0.3em] mb-2">Fundamental Equation</p>
+              <p className="text-lg font-serif italic text-zinc-200">The accounts are in balance.</p>
             </div>
-            <div className="flex items-center gap-8">
+            <div className="flex items-center gap-12">
                <div className="text-center">
-                 <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Total Assets</p>
-                 <p className="text-2xl font-bold text-white">{formatCurrency(data.summary.totalAssets)}</p>
+                 <p className="text-[10px] text-zinc-400 font-black uppercase tracking-widest mb-2">Assets</p>
+                 <p className="text-4xl font-black text-white">{formatCurrency(data.summary.totalAssets)}</p>
                </div>
-               <div className="text-2xl font-light text-zinc-600">=</div>
+               <div className="text-4xl font-light text-zinc-700">|</div>
                <div className="text-center">
-                 <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">L + E</p>
-                 <p className="text-2xl font-bold text-white">{formatCurrency(data.summary.totalLiabilitiesAndEquity)}</p>
+                 <p className="text-[10px] text-zinc-400 font-black uppercase tracking-widest mb-2">Liabilities + Equity</p>
+                 <p className="text-4xl font-black text-white">{formatCurrency(data.summary.totalLiabilitiesAndEquity)}</p>
                </div>
             </div>
           </div>

@@ -104,41 +104,41 @@ export default function TransactionsPage() {
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 bg-zinc-50/50 min-h-screen">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <Link href="/accounting">
-            <Button variant="ghost" size="icon" className="rounded-full hover:bg-zinc-800">
+            <Button variant="ghost" size="icon" className="rounded-full hover:bg-zinc-200 text-zinc-600">
               <ArrowLeft className="h-5 w-5" />
             </Button>
           </Link>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-white">General Ledger</h1>
-            <p className="text-muted-foreground">Detailed history of all financial transactions.</p>
+            <h1 className="text-3xl font-black tracking-tight text-zinc-900">General Ledger</h1>
+            <p className="text-zinc-500 font-medium">Detailed history of all financial transactions.</p>
           </div>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" className="border-zinc-800 bg-zinc-900/50">
+          <Button variant="outline" className="border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 shadow-sm">
             <Download className="mr-2 h-4 w-4" />
             Export CSV
           </Button>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-blue-600 hover:bg-blue-700">
+              <Button className="bg-zinc-900 hover:bg-zinc-800 text-white shadow-md">
                 <Plus className="mr-2 h-4 w-4" />
                 Record Transaction
               </Button>
             </DialogTrigger>
-            <DialogContent className="bg-zinc-900 border-zinc-800 text-white sm:max-w-[425px]">
+            <DialogContent className="bg-white border-zinc-200 text-zinc-900 sm:max-w-[425px] shadow-2xl">
               <DialogHeader>
-                <DialogTitle>Add Transaction</DialogTitle>
+                <DialogTitle className="text-xl font-bold">Add Transaction</DialogTitle>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-4 pt-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Description</label>
+                  <label className="text-sm font-bold text-zinc-700">Description</label>
                   <Input 
                     placeholder="Rent, Office Supplies, etc." 
-                    className="bg-zinc-800 border-zinc-700"
+                    className="bg-zinc-50 border-zinc-200 text-zinc-900 placeholder:text-zinc-400 focus:ring-zinc-500"
                     value={formData.description}
                     onChange={(e) => setFormData({...formData, description: e.target.value})}
                     required
@@ -146,22 +146,22 @@ export default function TransactionsPage() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Amount</label>
+                    <label className="text-sm font-bold text-zinc-700">Amount</label>
                     <Input 
                       type="number" 
                       step="0.01" 
                       placeholder="0.00" 
-                      className="bg-zinc-800 border-zinc-700"
+                      className="bg-zinc-50 border-zinc-200 text-zinc-900"
                       value={formData.amount}
                       onChange={(e) => setFormData({...formData, amount: e.target.value})}
                       required
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Date</label>
+                    <label className="text-sm font-bold text-zinc-700">Date</label>
                     <Input 
                       type="date" 
-                      className="bg-zinc-800 border-zinc-700"
+                      className="bg-zinc-50 border-zinc-200 text-zinc-900"
                       value={formData.date}
                       onChange={(e) => setFormData({...formData, date: e.target.value})}
                       required
@@ -169,38 +169,38 @@ export default function TransactionsPage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">From Account (Source)</label>
+                  <label className="text-sm font-bold text-zinc-700">From Account (Source)</label>
                   <Select 
                     onValueChange={(val) => setFormData({...formData, fromAccountId: val})}
                     value={formData.fromAccountId}
                   >
-                    <SelectTrigger className="bg-zinc-800 border-zinc-700">
+                    <SelectTrigger className="bg-zinc-50 border-zinc-200 text-zinc-900">
                       <SelectValue placeholder="Select account" />
                     </SelectTrigger>
-                    <SelectContent className="bg-zinc-900 border-zinc-800">
+                    <SelectContent className="bg-white border-zinc-200">
                       {accounts.map(a => (
-                        <SelectItem key={a.id} value={a.id}>{a.name} ({a.type})</SelectItem>
+                        <SelectItem key={a.id} value={a.id} className="text-zinc-900 focus:bg-zinc-100">{a.name} ({a.type})</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">To Account (Destination)</label>
+                  <label className="text-sm font-bold text-zinc-700">To Account (Destination)</label>
                   <Select 
                     onValueChange={(val) => setFormData({...formData, toAccountId: val})}
                     value={formData.toAccountId}
                   >
-                    <SelectTrigger className="bg-zinc-800 border-zinc-700">
+                    <SelectTrigger className="bg-zinc-50 border-zinc-200 text-zinc-900">
                       <SelectValue placeholder="Select account" />
                     </SelectTrigger>
-                    <SelectContent className="bg-zinc-900 border-zinc-800">
+                    <SelectContent className="bg-white border-zinc-200">
                       {accounts.map(a => (
-                        <SelectItem key={a.id} value={a.id}>{a.name} ({a.type})</SelectItem>
+                        <SelectItem key={a.id} value={a.id} className="text-zinc-900 focus:bg-zinc-100">{a.name} ({a.type})</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
-                <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 mt-4">
+                <Button type="submit" className="w-full bg-zinc-900 hover:bg-zinc-800 text-white font-bold py-6 mt-4">
                   Save Transaction
                 </Button>
               </form>
@@ -209,66 +209,66 @@ export default function TransactionsPage() {
         </div>
       </div>
 
-      <Card className="bg-zinc-900/40 border-zinc-800 backdrop-blur-xl">
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
+      <Card className="bg-white border-zinc-200 shadow-sm overflow-hidden">
+        <CardHeader className="flex flex-row items-center justify-between pb-4 bg-zinc-50/50 border-b border-zinc-100">
           <div className="relative w-full max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
             <Input 
               placeholder="Search transactions..." 
-              className="pl-10 bg-zinc-800/50 border-zinc-700"
+              className="pl-10 bg-white border-zinc-200 text-zinc-900 shadow-none focus:ring-0"
             />
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" className="text-muted-foreground hover:bg-zinc-800">
+            <Button variant="ghost" size="icon" className="text-zinc-500 hover:bg-zinc-200">
               <Filter className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon" className="text-muted-foreground hover:bg-zinc-800">
+            <Button variant="ghost" size="icon" className="text-zinc-500 hover:bg-zinc-200">
               <MoreVertical className="h-4 w-4" />
             </Button>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0">
           {loading ? (
-            <div className="space-y-4">
-              {[1, 2, 3, 4, 5].map(i => <Skeleton key={i} className="h-12 w-full" />)}
+            <div className="p-4 space-y-4">
+              {[1, 2, 3, 4, 5].map(i => <Skeleton key={i} className="h-12 w-full bg-zinc-100" />)}
             </div>
           ) : (
             <Table>
-              <TableHeader className="hover:bg-transparent">
-                <TableRow className="border-zinc-800 hover:bg-transparent">
-                  <TableHead className="text-muted-foreground">Date</TableHead>
-                  <TableHead className="text-muted-foreground">Description</TableHead>
-                  <TableHead className="text-muted-foreground">Accounts</TableHead>
-                  <TableHead className="text-muted-foreground">Reference</TableHead>
-                  <TableHead className="text-right text-muted-foreground">Amount</TableHead>
+              <TableHeader className="bg-zinc-50/50">
+                <TableRow className="border-zinc-100 hover:bg-transparent">
+                  <TableHead className="text-zinc-500 font-bold uppercase text-[10px] tracking-widest pl-6">Date</TableHead>
+                  <TableHead className="text-zinc-500 font-bold uppercase text-[10px] tracking-widest">Description</TableHead>
+                  <TableHead className="text-zinc-500 font-bold uppercase text-[10px] tracking-widest">Flow</TableHead>
+                  <TableHead className="text-zinc-500 font-bold uppercase text-[10px] tracking-widest">Reference</TableHead>
+                  <TableHead className="text-right text-zinc-500 font-bold uppercase text-[10px] tracking-widest pr-6">Amount</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {transactions.map((t) => (
-                  <TableRow key={t.id} className="border-zinc-800 hover:bg-zinc-800/40 group">
-                    <TableCell className="text-white">
+                  <TableRow key={t.id} className="border-zinc-100 hover:bg-zinc-50/80 transition-colors group">
+                    <TableCell className="text-zinc-600 font-medium pl-6">
                       {new Date(t.date).toLocaleDateString()}
                     </TableCell>
                     <TableCell>
-                      <div className="font-medium text-white">{t.description}</div>
-                      <div className="text-xs text-muted-foreground">By {t.createdBy?.name}</div>
+                      <div className="font-bold text-zinc-900">{t.description}</div>
+                      <div className="text-[10px] text-zinc-400 font-medium">Recorded by {t.createdBy?.name}</div>
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-2 text-xs">
-                        <span className="px-2 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/20">
+                      <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-tighter">
+                        <span className="px-2 py-1 rounded bg-zinc-100 text-zinc-600 border border-zinc-200">
                           {t.fromAccount?.name || "N/A"}
                         </span>
-                        <ArrowUpRight className="h-3 w-3 text-muted-foreground" />
-                        <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                        <ArrowUpRight className="h-3 w-3 text-zinc-300" />
+                        <span className="px-2 py-1 rounded bg-blue-50 text-blue-700 border border-blue-100">
                           {t.toAccount?.name || "N/A"}
                         </span>
                       </div>
                     </TableCell>
-                    <TableCell className="text-muted-foreground text-xs italic">
-                      {t.referenceType || "Manual"}
+                    <TableCell className="text-zinc-400 text-xs font-medium">
+                      {t.referenceType || "Manual Entry"}
                     </TableCell>
-                    <TableCell className="text-right">
-                      <span className={`font-mono font-bold ${t.toAccount?.type === 'REVENUE' || t.toAccount?.type === 'ASSET' ? 'text-emerald-400' : 'text-white'}`}>
+                    <TableCell className="text-right pr-6">
+                      <span className={`font-mono font-black text-lg ${t.toAccount?.type === 'REVENUE' || t.toAccount?.type === 'ASSET' ? 'text-emerald-600' : 'text-zinc-900'}`}>
                         {formatCurrency(t.amount)}
                       </span>
                     </TableCell>
@@ -276,7 +276,7 @@ export default function TransactionsPage() {
                 ))}
                 {transactions.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center py-10 text-muted-foreground">
+                    <TableCell colSpan={5} className="text-center py-16 text-zinc-400 font-medium italic">
                       No transactions found.
                     </TableCell>
                   </TableRow>
