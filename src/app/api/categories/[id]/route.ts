@@ -8,7 +8,10 @@ const schema = z.object({
   description: z.string().optional().nullable(),
 });
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   const session = await auth();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -18,12 +21,13 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   }
 
   try {
+    const { id } = await params;
     const body = await req.json();
     const parsed = schema.safeParse(body);
     if (!parsed.success) {
       return NextResponse.json({ error: "Validation error" }, { status: 400 });
     }
-    const category = await prisma.category.update({ where: { id: params.id }, data: parsed.data });
+    const category = await prisma.category.update({ where: { id }, data: parsed.data });
     return NextResponse.json(category);
   } catch (err: any) {
     if (err.code === "P2002") return NextResponse.json({ error: "Name already exists" }, { status: 409 });
@@ -31,7 +35,10 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   }
 }
 
-export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   const session = await auth();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -39,11 +46,15 @@ export async function DELETE(_req: NextRequest, { params }: { params: { id: stri
   if (role !== "ADMIN") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   try {
-    await prisma.category.delete({ where: { id: params.id } });
+    const { id } = await params;
+    await prisma.category.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch (err: any) {
     if (err.code === "P2003") {
-      return NextResponse.json({ error: "Cannot delete — products are assigned to this category" }, { status: 409 });
+      return NextResponse.json(
+        { error: "Cannot delete — products are assigned to this category" },
+        { status: 409 }
+      );
     }
     return NextResponse.json({ error: err.message }, { status: 400 });
   }

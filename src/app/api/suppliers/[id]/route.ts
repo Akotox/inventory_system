@@ -12,7 +12,10 @@ const schema = z.object({
   isActive: z.boolean().optional(),
 });
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   const session = await auth();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -22,17 +25,21 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   }
 
   try {
+    const { id } = await params;
     const body = await req.json();
     const parsed = schema.safeParse(body);
     if (!parsed.success) return NextResponse.json({ error: "Validation error" }, { status: 400 });
-    const supplier = await prisma.supplier.update({ where: { id: params.id }, data: parsed.data });
+    const supplier = await prisma.supplier.update({ where: { id }, data: parsed.data });
     return NextResponse.json(supplier);
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 400 });
   }
 }
 
-export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   const session = await auth();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -40,9 +47,10 @@ export async function DELETE(_req: NextRequest, { params }: { params: { id: stri
   if (role !== "ADMIN") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   try {
-    // Soft delete
+    const { id } = await params;
+    // Soft delete — preserve historical data
     const supplier = await prisma.supplier.update({
-      where: { id: params.id },
+      where: { id },
       data: { isActive: false },
     });
     return NextResponse.json(supplier);
