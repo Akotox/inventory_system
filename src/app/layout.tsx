@@ -7,10 +7,10 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: {
-    default: "InventoryOS",
-    template: "%s | InventoryOS",
+    default: "Costec",
+    template: "%s | Costec",
   },
-  description: "Enterprise Inventory & Sales Management System",
+  description: "Costec — Enterprise Inventory & Sales Management",
 };
 
 export default function RootLayout({

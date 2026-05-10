@@ -100,7 +100,11 @@ async function getDashboardData() {
   };
 }
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: { error?: string };
+}) {
   const session = await auth();
   const data = await getDashboardData();
 
@@ -111,6 +115,11 @@ export default async function DashboardPage() {
         subtitle={`Welcome back, ${session?.user?.name?.split(" ")[0]}`}
       />
       <div className="p-6 space-y-6">
+        {searchParams.error === "forbidden" && (
+          <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 flex items-center gap-2">
+            <span className="font-medium">Access denied.</span> You don&apos;t have permission to view that page.
+          </div>
+        )}
         <DashboardStats stats={data.stats} />
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">

@@ -14,8 +14,8 @@ export default function LoginPage() {
             <Boxes className="h-6 w-6 text-white" />
           </div>
           <div>
-            <p className="text-white font-bold text-lg leading-none">InventoryOS</p>
-            <p className="text-slate-400 text-xs mt-0.5">Enterprise Edition</p>
+            <p className="text-white font-bold text-lg leading-none">Costec</p>
+            <p className="text-slate-400 text-xs mt-0.5">Inventory Management</p>
           </div>
         </div>
 
@@ -26,7 +26,8 @@ export default function LoginPage() {
               <span className="text-blue-400">with confidence.</span>
             </h2>
             <p className="text-slate-400 text-lg">
-              Real-time stock tracking, sales management, and purchase order automation — all in one place.
+              Real-time stock tracking, sales management, and purchase order
+              automation — all in one place.
             </p>
           </div>
 
@@ -37,7 +38,10 @@ export default function LoginPage() {
               { label: "Uptime", value: "99.9%" },
               { label: "Reports generated", value: "Daily" },
             ].map((stat) => (
-              <div key={stat.label} className="bg-white/5 rounded-xl p-4 border border-white/10">
+              <div
+                key={stat.label}
+                className="bg-white/5 rounded-xl p-4 border border-white/10"
+              >
                 <p className="text-2xl font-bold text-white">{stat.value}</p>
                 <p className="text-slate-400 text-sm">{stat.label}</p>
               </div>
@@ -46,35 +50,29 @@ export default function LoginPage() {
         </div>
 
         <p className="text-slate-500 text-sm">
-          © 2025 InventoryOS. Enterprise Inventory Management.
+          © {new Date().getFullYear()} Costec. All rights reserved.
         </p>
       </div>
 
       {/* Right panel */}
       <div className="flex-1 flex items-center justify-center p-8 bg-background">
         <div className="w-full max-w-md space-y-8">
-          <div className="lg:hidden flex items-center gap-3 mb-8">
+          {/* Mobile logo */}
+          <div className="lg:hidden flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-blue-500 flex items-center justify-center">
               <Boxes className="h-6 w-6 text-white" />
             </div>
-            <p className="font-bold text-xl">InventoryOS</p>
+            <p className="font-bold text-xl">Costec</p>
           </div>
 
           <div>
             <h1 className="text-3xl font-bold">Welcome back</h1>
-            <p className="text-muted-foreground mt-2">Sign in to your account to continue</p>
+            <p className="text-muted-foreground mt-2">
+              Sign in to your account to continue
+            </p>
           </div>
 
           <LoginForm />
-
-          <div className="rounded-lg border bg-muted/30 p-4 space-y-2">
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Demo credentials</p>
-            <div className="space-y-1 text-sm">
-              <p><span className="font-medium">Admin:</span> admin@inventory.com / admin123</p>
-              <p><span className="font-medium">Cashier:</span> cashier@inventory.com / cashier123</p>
-              <p><span className="font-medium">Warehouse:</span> warehouse@inventory.com / warehouse123</p>
-            </div>
-          </div>
         </div>
       </div>
     </div>
