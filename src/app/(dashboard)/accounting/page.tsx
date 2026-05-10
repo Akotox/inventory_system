@@ -77,18 +77,18 @@ export default function AccountingPage() {
           <p className="text-zinc-500 mt-2 font-medium">Manage your firm's income, expenses, and ledger accounts.</p>
         </div>
         <div className="flex gap-3">
-          <Link href="/accounting/transactions">
-            <Button className="bg-zinc-900 hover:bg-zinc-800 text-white shadow-md">
+          <Button className="bg-zinc-900 hover:bg-zinc-800 text-white shadow-md" asChild>
+            <Link href="/accounting/transactions">
               <Plus className="mr-2 h-4 w-4" />
               New Transaction
-            </Button>
-          </Link>
-          <Link href="/accounting/reports">
-            <Button variant="outline" className="border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-700">
+            </Link>
+          </Button>
+          <Button variant="outline" className="border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-700" asChild>
+            <Link href="/accounting/reports">
               <TrendingUp className="mr-2 h-4 w-4" />
               Reports
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         </div>
       </div>
 
