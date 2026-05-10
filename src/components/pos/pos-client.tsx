@@ -113,9 +113,7 @@ export function POSClient({ products, customers }: POSClientProps) {
     (sum, i) => sum + i.unitPrice * i.quantity - i.discount,
     0
   );
-  const taxableAmount = subtotal - discount;
-  const tax = taxableAmount * 0.1;
-  const total = taxableAmount + tax;
+  const total = subtotal - discount;
 
   const handleCheckout = async () => {
     if (cart.length === 0) return;
@@ -134,7 +132,7 @@ export function POSClient({ products, customers }: POSClientProps) {
             discount: i.discount,
           })),
           discount,
-          tax,
+          tax: 0,
           paymentMethod,
           status: "PAID",
         }),
@@ -364,10 +362,6 @@ export function POSClient({ products, customers }: POSClientProps) {
                   <span className="tabular-nums">-{formatCurrency(discount)}</span>
                 </div>
               )}
-              <div className="flex justify-between text-muted-foreground">
-                <span>Tax (10%)</span>
-                <span className="tabular-nums">{formatCurrency(tax)}</span>
-              </div>
               <div className="flex justify-between font-bold text-base border-t pt-1.5">
                 <span>Total</span>
                 <span className="tabular-nums">{formatCurrency(total)}</span>
