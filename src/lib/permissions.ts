@@ -24,6 +24,7 @@ export const ROLE_ALLOWED_ROUTES: Record<UserRole, string[]> = {
     "/reports",
     "/catalog",
     "/settings",
+    "/accounting",
   ],
   CASHIER: [
     "/dashboard",
@@ -72,6 +73,9 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/reports",    label: "Reports",         icon: "BarChart3",       roles: ["ADMIN", "MANAGER"], section: "analytics" },
   // Admin
   { href: "/settings",   label: "Settings",        icon: "Settings",        roles: ["ADMIN"], section: "admin" },
+  // Financials
+  { href: "/accounting",          label: "Ledger",           icon: "Wallet",      roles: ["ADMIN", "MANAGER"], section: "financials" },
+  { href: "/accounting/reports",  label: "Balance Sheet",    icon: "FileSpreadsheet", roles: ["ADMIN", "MANAGER"], section: "financials" },
 ];
 
 export const SECTION_LABELS: Record<string, string> = {
@@ -79,5 +83,6 @@ export const SECTION_LABELS: Record<string, string> = {
   inventory: "Inventory",
   catalog:   "Catalog",
   analytics: "Analytics",
+  financials: "Financials",
   admin:     "Admin",
 };

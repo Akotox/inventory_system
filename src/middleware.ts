@@ -9,7 +9,8 @@ export default auth((req) => {
 
   const isAuthPage = nextUrl.pathname.startsWith("/login");
   const isApiAuth = nextUrl.pathname.startsWith("/api/auth");
-  const isPublic = isAuthPage || isApiAuth;
+  const isLanding = nextUrl.pathname === "/landing" || nextUrl.pathname === "/";
+  const isPublic = isAuthPage || isApiAuth || isLanding;
 
   // Always allow auth routes
   if (isPublic) {

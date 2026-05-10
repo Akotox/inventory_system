@@ -17,6 +17,8 @@ import {
   Zap,
   Tag,
   Building2,
+  Wallet,
+  FileSpreadsheet,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { signOut, useSession } from "next-auth/react";
@@ -42,6 +44,8 @@ const ICONS: Record<string, React.ElementType> = {
   Zap,
   Tag,
   Building2,
+  Wallet,
+  FileSpreadsheet,
 };
 
 export function Sidebar() {

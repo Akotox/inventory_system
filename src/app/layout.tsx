@@ -7,10 +7,10 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: {
-    default: "Costec",
-    template: "%s | Costec",
+    default: "Costech",
+    template: "%s | Costech",
   },
-  description: "Costec — Enterprise Inventory & Sales Management",
+  description: "Costech — Africa's Premier Tech Restoration Hub",
 };
 
 export default function RootLayout({

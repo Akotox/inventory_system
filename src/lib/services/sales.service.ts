@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { SaleStatus, PaymentMethod } from "@prisma/client";
 import { InventoryService } from "./inventory.service";
+import { AccountingService } from "./accounting.service";
 import { generateSaleNumber } from "@/lib/utils";
 
 export interface CreateSaleItemDTO {
@@ -122,6 +123,22 @@ export class SalesService {
           data: { totalSpent: { increment: total } },
         });
       }
+
+      // ─── Financial Accounting Integration ───
+      // 1. Ensure default accounts exist
+      // Note: In a high-traffic system, you'd cache these or run once at startup
+      const accounts = await AccountingService.getOrCreateDefaultAccounts();
+      
+      // 2. Record Income
+      await AccountingService.recordTransaction(tx, {
+        description: `Sale ${saleNumber}`,
+        amount: Number(total),
+        fromAccountName: "Sales Income",
+        toAccountName: "Cash", // Default to Cash for now
+        referenceId: sale.id,
+        referenceType: "SALE",
+        createdById: payload.userId,
+      });
 
       return sale;
     });
