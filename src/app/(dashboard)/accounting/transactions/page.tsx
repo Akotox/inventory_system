@@ -6,10 +6,11 @@ import {
   Search, 
   Filter, 
   ArrowLeft,
-  ArrowDownLeft,
   ArrowUpRight,
   MoreVertical,
-  Download
+  Download,
+  Pencil,
+  Trash2
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -39,12 +40,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function TransactionsPage() {
   const [transactions, setTransactions] = useState<any[]>([]);
   const [accounts, setAccounts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     description: "",
     amount: "",
@@ -78,8 +86,12 @@ export default function TransactionsPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch("/api/accounting/transactions", {
-        method: "POST",
+      const url = editingId 
+        ? `/api/accounting/transactions/${editingId}` 
+        : "/api/accounting/transactions";
+      
+      const res = await fetch(url, {
+        method: editingId ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
@@ -88,19 +100,50 @@ export default function TransactionsPage() {
       });
 
       if (res.ok) {
-        setIsDialogOpen(false);
-        setFormData({
-          description: "",
-          amount: "",
-          fromAccountId: "",
-          toAccountId: "",
-          date: new Date().toISOString().split('T')[0],
-        });
+        handleCloseDialog();
         fetchData();
       }
     } catch (error) {
-      console.error("Error creating transaction", error);
+      console.error("Error saving transaction", error);
     }
+  };
+
+  const handleEdit = (t: any) => {
+    setEditingId(t.id);
+    setFormData({
+      description: t.description,
+      amount: t.amount.toString(),
+      fromAccountId: t.fromAccountId || "",
+      toAccountId: t.toAccountId || "",
+      date: new Date(t.date).toISOString().split('T')[0],
+    });
+    setIsDialogOpen(true);
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this transaction? This will reverse the account balance changes.")) return;
+    try {
+      const res = await fetch(`/api/accounting/transactions/${id}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        fetchData();
+      }
+    } catch (error) {
+      console.error("Error deleting transaction", error);
+    }
+  };
+
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
+    setEditingId(null);
+    setFormData({
+      description: "",
+      amount: "",
+      fromAccountId: "",
+      toAccountId: "",
+      date: new Date().toISOString().split('T')[0],
+    });
   };
 
   return (
@@ -122,7 +165,7 @@ export default function TransactionsPage() {
             <Download className="mr-2 h-4 w-4" />
             Export CSV
           </Button>
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <Dialog open={isDialogOpen} onOpenChange={(open) => !open && handleCloseDialog()}>
             <DialogTrigger asChild>
               <Button className="bg-zinc-900 hover:bg-zinc-800 text-white shadow-md">
                 <Plus className="mr-2 h-4 w-4" />
@@ -131,7 +174,7 @@ export default function TransactionsPage() {
             </DialogTrigger>
             <DialogContent className="bg-white border-zinc-200 text-zinc-900 sm:max-w-[425px] shadow-2xl">
               <DialogHeader>
-                <DialogTitle className="text-xl font-bold">Add Transaction</DialogTitle>
+                <DialogTitle className="text-xl font-bold">{editingId ? 'Edit Transaction' : 'Add Transaction'}</DialogTitle>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-4 pt-4">
                 <div className="space-y-2">
@@ -201,7 +244,7 @@ export default function TransactionsPage() {
                   </Select>
                 </div>
                 <Button type="submit" className="w-full bg-zinc-900 hover:bg-zinc-800 text-white font-bold py-6 mt-4">
-                  Save Transaction
+                  {editingId ? 'Update Transaction' : 'Save Transaction'}
                 </Button>
               </form>
             </DialogContent>
@@ -222,9 +265,6 @@ export default function TransactionsPage() {
             <Button variant="ghost" size="icon" className="text-zinc-500 hover:bg-zinc-200">
               <Filter className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon" className="text-zinc-500 hover:bg-zinc-200">
-              <MoreVertical className="h-4 w-4" />
-            </Button>
           </div>
         </CardHeader>
         <CardContent className="p-0">
@@ -241,6 +281,7 @@ export default function TransactionsPage() {
                   <TableHead className="text-zinc-500 font-bold uppercase text-[10px] tracking-widest">Flow</TableHead>
                   <TableHead className="text-zinc-500 font-bold uppercase text-[10px] tracking-widest">Reference</TableHead>
                   <TableHead className="text-right text-zinc-500 font-bold uppercase text-[10px] tracking-widest pr-6">Amount</TableHead>
+                  <TableHead className="w-[50px]"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -272,11 +313,30 @@ export default function TransactionsPage() {
                         {formatCurrency(t.amount)}
                       </span>
                     </TableCell>
+                    <TableCell className="pr-4">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-400 hover:text-zinc-900">
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="bg-white border-zinc-200">
+                          <DropdownMenuItem className="text-zinc-700 focus:bg-zinc-50 cursor-pointer" onClick={() => handleEdit(t)}>
+                            <Pencil className="mr-2 h-4 w-4" />
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className="text-rose-600 focus:bg-rose-50 cursor-pointer" onClick={() => handleDelete(t.id)}>
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
                   </TableRow>
                 ))}
                 {transactions.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center py-16 text-zinc-400 font-medium italic">
+                    <TableCell colSpan={6} className="text-center py-16 text-zinc-400 font-medium italic">
                       No transactions found.
                     </TableCell>
                   </TableRow>
