@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 const createSaleSchema = z.object({
   customerId: z.string().uuid().optional().nullable(),
-  userId: z.string().uuid(),
+  userId: z.string(),
   items: z.array(
     z.object({
       productId: z.string().uuid(),
