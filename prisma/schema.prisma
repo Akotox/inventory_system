@@ -336,6 +336,21 @@ model SystemSettings {
   companyAddress String?
   companyPhone   String?
   companyEmail   String?
+  taxNumber      String?
+  companyLogo    String?
+
+  // Localization & Finance
+  currencyCode   String   @default("USD")
+  currencySymbol String   @default("$")
+  taxRate        Decimal  @default(0) @db.Decimal(5, 2)
+  taxName        String   @default("VAT")
+
+  // Invoicing & POS
+  invoicePrefix     String  @default("INV-")
+  invoiceNextNumber Int     @default(1)
+  invoiceTerms      String? @db.Text
+  receiptHeader     String? @db.Text
+  receiptFooter     String? @db.Text
 
   // Email Settings (SMTP)
   smtpHost          String?
