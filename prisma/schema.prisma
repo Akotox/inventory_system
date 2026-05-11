@@ -324,3 +324,32 @@ model FinancialTransaction {
 
   @@map("financial_transactions")
 }
+
+// ─── System Settings ──────────────────────────────────────────────────────────
+
+model SystemSettings {
+  id        String   @id @default("default")
+  updatedAt DateTime @updatedAt
+
+  // Company Info
+  companyName    String?
+  companyAddress String?
+  companyPhone   String?
+  companyEmail   String?
+
+  // Email Settings (SMTP)
+  smtpHost          String?
+  smtpPort          Int?     @default(587)
+  smtpUser          String?
+  smtpPassword      String?
+  senderName        String?
+  senderEmail       String?
+  enableSalesEmails Boolean @default(false)
+
+  // Stock Settings
+  lowStockThreshold Int     @default(10)
+  enableStockAlerts Boolean @default(true)
+  stockAlertEmail   String?
+
+  @@map("system_settings")
+}
