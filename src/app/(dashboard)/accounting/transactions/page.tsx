@@ -10,7 +10,8 @@ import {
   MoreVertical,
   Download,
   Pencil,
-  Trash2
+  Trash2,
+  RotateCcw
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -131,6 +132,23 @@ export default function TransactionsPage() {
       }
     } catch (error) {
       console.error("Error deleting transaction", error);
+    }
+  };
+
+  const handleReverse = async (id: string) => {
+    if (!confirm("Are you sure you want to reverse this transaction? A new counter-entry will be created to negate this transaction's effect.")) return;
+    try {
+      const res = await fetch(`/api/accounting/transactions/${id}/reverse`, {
+        method: "POST",
+      });
+      if (res.ok) {
+        fetchData();
+      } else {
+        const err = await res.text();
+        alert(`Error reversing transaction: ${err}`);
+      }
+    } catch (error) {
+      console.error("Error reversing transaction", error);
     }
   };
 
@@ -291,7 +309,15 @@ export default function TransactionsPage() {
                       {new Date(t.date).toLocaleDateString()}
                     </TableCell>
                     <TableCell>
-                      <div className="font-bold text-zinc-900">{t.description}</div>
+                      <div className="font-bold text-zinc-900 flex items-center gap-2">
+                        {t.description}
+                        {t.isReversed && (
+                          <span className="text-[10px] bg-rose-100 text-rose-700 px-1.5 py-0.5 rounded font-black uppercase">Reversed</span>
+                        )}
+                        {t.referenceType === "REVERSAL" && (
+                          <span className="text-[10px] bg-zinc-100 text-zinc-600 px-1.5 py-0.5 rounded font-black uppercase">Reversal Entry</span>
+                        )}
+                      </div>
                       <div className="text-[10px] text-zinc-400 font-medium">Recorded by {t.createdBy?.name}</div>
                     </TableCell>
                     <TableCell>
@@ -309,7 +335,7 @@ export default function TransactionsPage() {
                       {t.referenceType || "Manual Entry"}
                     </TableCell>
                     <TableCell className="text-right pr-6">
-                      <span className={`font-mono font-black text-lg ${t.toAccount?.type === 'REVENUE' || t.toAccount?.type === 'ASSET' ? 'text-emerald-600' : 'text-zinc-900'}`}>
+                      <span className={`font-mono font-black text-lg ${t.isReversed ? 'text-zinc-300 line-through' : (t.toAccount?.type === 'REVENUE' || t.toAccount?.type === 'ASSET' ? 'text-emerald-600' : 'text-zinc-900')}`}>
                         {formatCurrency(t.amount)}
                       </span>
                     </TableCell>
@@ -325,6 +351,12 @@ export default function TransactionsPage() {
                             <Pencil className="mr-2 h-4 w-4" />
                             Edit
                           </DropdownMenuItem>
+                          {!t.isReversed && t.referenceType !== "REVERSAL" && (
+                            <DropdownMenuItem className="text-blue-600 focus:bg-blue-50 cursor-pointer" onClick={() => handleReverse(t.id)}>
+                              <RotateCcw className="mr-2 h-4 w-4" />
+                              Reverse
+                            </DropdownMenuItem>
+                          )}
                           <DropdownMenuItem className="text-rose-600 focus:bg-rose-50 cursor-pointer" onClick={() => handleDelete(t.id)}>
                             <Trash2 className="mr-2 h-4 w-4" />
                             Delete

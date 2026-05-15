@@ -316,6 +316,8 @@ model FinancialTransaction {
   referenceId   String?  @db.Uuid
   referenceType String?  // SALE | PURCHASE_ORDER | MANUAL
   createdById   String   // plain String — references User.id (cuid)
+  isReversed   Boolean  @default(false)
+  reversedTransactionId String? @db.Uuid
   createdAt     DateTime @default(now())
 
   fromAccount FinancialAccount? @relation("FromAccount", fields: [fromAccountId], references: [id])
