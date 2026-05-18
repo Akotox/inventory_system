@@ -16,6 +16,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { AiAccountingPanel } from "@/components/accounting/ai-accounting-panel";
 import Skeleton from "../../../../components/ui/skeleton";
 import Link from "next/link";
 import { formatCurrency } from "@/lib/utils";
@@ -269,6 +270,8 @@ export default function TransactionsPage() {
           </Dialog>
         </div>
       </div>
+
+      <AiAccountingPanel onTransactionsSaved={fetchData} />
 
       <Card className="bg-white border-zinc-200 shadow-sm overflow-hidden">
         <CardHeader className="flex flex-row items-center justify-between pb-4 bg-zinc-50/50 border-b border-zinc-100">
